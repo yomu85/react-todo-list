@@ -15,7 +15,7 @@ function App() {
     }
   }
 
-  const deleteItem = (index) => {
+  const deleteItem = (index: any) => {
     setItems(items.filter((_, i) => i !== index))
   }
 
