@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -7,17 +7,15 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   useSortable,
-} from '@dnd-kit/sortable';
-import {
-  CSS,
-} from '@dnd-kit/utilities';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -33,7 +31,11 @@ interface TodoItem {
 }
 
 // 개별 TodoItem 컴포넌트 (드래그 가능)
-function SortableTodoItem({ item, onToggle, onRemove }: {
+function SortableTodoItem({
+  item,
+  onToggle,
+  onRemove,
+}: {
   item: TodoItem;
   onToggle: (id: number) => void;
   onRemove: (id: number) => void;
@@ -45,19 +47,19 @@ function SortableTodoItem({ item, onToggle, onRemove }: {
     transform,
     transition,
     isDragging,
-  } = useSortable({ 
+  } = useSortable({
     id: item.id,
     transition: {
       duration: 150, // 더 빠른 전환
-      easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
-    }
+      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+    },
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? 'none' : transition, // 드래그 중에는 transition 비활성화
+    transition: isDragging ? "none" : transition, // 드래그 중에는 transition 비활성화
     opacity: isDragging ? 0.6 : 1, // 투명도 조정
-    zIndex: isDragging ? 1000 : 'auto',
+    zIndex: isDragging ? 1000 : "auto",
   };
 
   // 체크박스와 삭제 버튼 클릭 시 드래그 방지
@@ -77,26 +79,23 @@ function SortableTodoItem({ item, onToggle, onRemove }: {
       style={style}
       {...attributes}
       {...listeners}
-      className={cn(
-        "todo-item-draggable",
-        isDragging && "dragging"
-      )}
+      className={cn("todo-item-draggable", isDragging && "dragging")}
     >
-      <Label 
-        className={cn("todo-info-label", item.completed && "checked")} 
+      <Label
+        className={cn("todo-info-label", item.completed && "checked")}
         htmlFor={`todo-${item.id}`}
         onClick={(e) => e.preventDefault()} // 라벨 클릭 방지
       >
-        <Checkbox 
-          id={`todo-${item.id}`} 
-          checked={item.completed} 
+        <Checkbox
+          id={`todo-${item.id}`}
+          checked={item.completed}
           onCheckedChange={handleCheckboxChange}
           onClick={handleCheckboxChange}
         />
         {item.text}
       </Label>
-      <Button 
-        variant="ghost" 
+      <Button
+        variant="ghost"
         onClick={handleRemoveClick}
         onMouseDown={(e) => e.stopPropagation()} // 드래그 시작 방지
       >
@@ -108,6 +107,7 @@ function SortableTodoItem({ item, onToggle, onRemove }: {
 
 function App() {
   const [items, setItems] = useState<TodoItem[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -122,6 +122,21 @@ function App() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // 컴포넌트가 처음 마운트될 때만 실행
+  useEffect(() => {
+    const storedItems = JSON.parse(localStorage.getItem("todoItems") ?? "[]");
+    setItems(storedItems);
+    setIsInitialized(true);
+  }, []);
+
+  // item이 변경될 때마다 실행
+  useEffect(() => {
+    console.log(JSON.stringify(items));
+    if (isInitialized) {
+      localStorage.setItem("todoItems", JSON.stringify(items));
+    }
+  }, [items, isInitialized]);
 
   const handleAddTodo = () => {
     if (!inputValue.trim()) {
@@ -141,9 +156,7 @@ function App() {
   };
 
   const handleRemoveTodo = (id: number) => {
-    setItems((prev) => 
-      prev.filter((todo) => todo.id !== id )
-    );
+    setItems((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   const handleToggleTodo = (id: number) => {
@@ -170,7 +183,7 @@ function App() {
 
   // Enter 키로도 추가 가능하도록
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleAddTodo();
     }
   };
@@ -186,18 +199,16 @@ function App() {
           onKeyDown={handleKeyPress}
           placeholder="할 일을 입력하세요"
         />
-        <Button onClick={handleAddTodo}>
-          저장
-        </Button>
+        <Button onClick={handleAddTodo}>저장</Button>
       </div>
 
-      <DndContext 
+      <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext 
-          items={items.map(item => item.id)}
+        <SortableContext
+          items={items.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
           <ul className="todo-info-list">
