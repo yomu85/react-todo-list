@@ -28,6 +28,9 @@
   font-size: 16px;
   line-height: 1.5;
   color: #374151;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .todo-info-list li:hover {

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Save } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import "./App.css";
 
@@ -37,6 +37,11 @@ function App() {
     inputRef.current?.focus(); // 입력 후 입력창에 포커스 유지
   };
 
+  const handleRemoveTodo = (id: number) => {
+    setItems((prev) => 
+      prev.filter((todo) => todo.id !== id )
+    );
+  }
   const handleToggleTodo = (id: number) => {
     setItems((prev) =>
       prev.map((todo) =>
@@ -67,6 +72,9 @@ function App() {
               <Checkbox id={`todo-${item.id}`} checked={item.completed} onCheckedChange={() => handleToggleTodo(item.id)} />
               {item.text}
             </Label>
+            <Button variant="ghost" onClick={() => handleRemoveTodo(item.id)}>
+              <Trash2 />
+            </Button>
           </li>
         ))}
       </ul>
