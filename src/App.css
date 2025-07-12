@@ -4,11 +4,62 @@
   padding: 20px;
 }
 
+.todo-input:focus {
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+}
+
 .todo-info-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 20px 0 0 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+}
+
+.todo-info-list li {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.todo-info-list li:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.todo-info-list li:nth-child(odd) {
+  background: #f9fafb;
+}
+
+/* 빈 상태일 때 */
+.todo-info-list:empty::after {
+  content: "아직 할 일이 없습니다. 위에서 새로운 할 일을 추가해보세요! 📝";
+  display: block;
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+  padding: 40px 20px;
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.todo-info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.todo-info-label.checked {
+  text-decoration: line-through;
+  color: #9ca3af;
 }
